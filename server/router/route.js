@@ -19,7 +19,7 @@ router.post("/register", async(req, res) => {
 
   try {
     connection.query(
-      `SELECT * FROM user WHERE email = ${email}`,
+      `SELECT * FROM register WHERE email = ${email}`,
       (err, result) => {
         if (err) {
           console.log(err);
@@ -36,7 +36,7 @@ router.post("/register", async(req, res) => {
       const cpassword1 = await bcrypt.hash(cpassword, 12);
 
       connection.query(
-        "INSERT INTO user SET ?",
+        "INSERT INTO register SET ?",
         {
           fname: fname,
           email: email,
@@ -63,8 +63,8 @@ router.post("/register", async(req, res) => {
 function generateAuthToken(user) {
   return new Promise((resolve, reject) => {
     try {
-      const token = jwt.sign({ _id: user.cid }, secretKey);
-      const query = `UPDATE user SET token = '${token}' WHERE cid=${user.cid}`;
+      const token = jwt.sign({ _id: user.cid }, 'abcdefgh25poiusertdtuiojndertins');
+      const query = `UPDATE register SET token = '${token}' WHERE cid=${user.cid}`;
 
       connection.query(query,(err, results) => {
         if (err) {
@@ -93,7 +93,7 @@ router.post("/login", (req, res) => {
 
   try {
     connection.query(
-      `SELECT * FROM user WHERE email = '${email}'`,
+      `SELECT * FROM register WHERE email = '${email}'`,
       async(err, result) => {
         if (err) {
           res.status(422).json({ error: "User not found" });
@@ -123,7 +123,7 @@ router.post("/logout", (req, res) => {
   const { cid } = req.body;
 
   try {
-    const query = `UPDATE user SET token = '${null}' WHERE cid=${cid}`;
+    const query = `UPDATE register SET token = '${null}' WHERE cid=${cid}`;
 
     connection.query(query,(err, results) => {
       if (err) {
@@ -147,7 +147,7 @@ router.post("/getaccount", (req, res) => {
   // console.log(token);
 
   try {
-    const query = `SELECT * FROM user WHERE token = '${token}'`;
+    const query = `SELECT * FROM register WHERE token = '${token}'`;
 
     connection.query(query,(err, results) => {
       if (err) {
